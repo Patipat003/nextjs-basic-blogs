@@ -1,29 +1,22 @@
 "use client";
 
+import Loading from "./components/Loading";
 import { useNews } from "./contexts/NewsContext";
 import Link from "next/link";
+import BackToTop from "./components/BackToTop";
 
 export default function Home() {
   const { articles, loading } = useNews();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600"></div>
-          <p className="text-indigo-600 text-lg font-medium animate-pulse">
-            Loading news...
-          </p>
-        </div>
-      </div>
-    );
+    return <Loading text="Loading news..." />;
   }
 
   return (
     <div className="min-h-screen pt-26">
-      {/* News Grid */}
+      <BackToTop />
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article, index) => (
             <Link
               key={`${article.title}-${index}`}
@@ -31,13 +24,12 @@ export default function Home() {
               className="group h-full"
             >
               <div className="bg-black/20 backdrop-blur-sm border border-white/10 h-full rounded-xl">
-                {/* Image Container */}
                 <div className="relative overflow-hidden flex-shrink-0">
                   {article.urlToImage ? (
                     <img
                       src={article.urlToImage}
                       alt={article.title}
-                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-48 flex items-center justify-center">
@@ -58,22 +50,21 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <h2 className="text-lg font-bold text-indigo-300 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
+                <div className="p-6 flex-1 flex flex-col group-hover:scale-105 transition-transform duration-500">
+                  <h2 className="text-lg font-bold text-gray-300 group-hover:text-indigo-600 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
                     {article.title}
                   </h2>
 
-                  <p className="text-sm text-gray-300 mt-3 line-clamp-3 leading-relaxed flex-1 min-h-[4.5rem]">
+                  <p className="text-sm text-gray-400 mt-3 line-clamp-3 leading-relaxed flex-1 min-h-[4.5rem]">
                     {article.description || "No description available..."}
                   </p>
 
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-indigo-50 flex-shrink-0">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-indigo-900 flex-shrink-0">
                     <p className="text-xs font-medium text-gray-300 bg-indigo-900 px-3 py-1 rounded-full truncate max-w-[60%]">
                       {article.source?.name || "News"}
                     </p>
 
-                    <div className="flex items-center justify-center text-indigo-500 group-hover:text-indigo-700 transition-colors flex-shrink-0">
+                    <div className="flex items-center justify-center text-gray-400 group-hover:text-indigo-700 transition-colors flex-shrink-0">
                       <span className="text-xs font-medium mr-0.5">
                         Read more
                       </span>
@@ -98,7 +89,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Empty state */}
         {articles.length === 0 && (
           <div className="text-center py-16">
             <div className="text-indigo-200 mb-6">
@@ -114,10 +104,10 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+            <h3 className="text-xl font-semibold text-gray-300 mb-2">
               No news articles found
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               Please try again later or check your connection.
             </p>
           </div>

@@ -47,6 +47,9 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
         {
           params: {
             q: "anime",
+            domains:
+              "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
+            language: "en",
             apiKey: apiKey,
           },
         }

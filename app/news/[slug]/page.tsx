@@ -4,7 +4,7 @@ import Loading from "@/app/components/Loading";
 import { useNews } from "@/app/contexts/NewsContext";
 import { useParams, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
-import React from "react";
+import { toast } from "sonner";
 
 const NewsDetailPage = () => {
   const { slug } = useParams();
@@ -12,7 +12,7 @@ const NewsDetailPage = () => {
   const router = useRouter();
 
   if (loading) {
-    return <Loading />;
+    return <Loading text="Loading article..." />;
   }
 
   const article = articles.find((a) => encodeURIComponent(a.title) === slug);
@@ -21,10 +21,8 @@ const NewsDetailPage = () => {
 
   return (
     <div className="min-h-screen pt-26">
-      {/* Article Content */}
       <article className="max-w-4xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-          {/* Featured Image */}
+        <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
           {article.urlToImage && (
             <div className="relative">
               <img
@@ -36,11 +34,9 @@ const NewsDetailPage = () => {
             </div>
           )}
 
-          {/* Article Header */}
           <div className="p-6 md:p-8">
-            {/* Source and Date */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <span className="inline-flex items-center bg-indigo-100 text-indigo-700 text-sm font-medium px-3 py-1.5 rounded-full">
+              <span className="inline-flex items-center bg-indigo-900 text-gray-300 text-sm font-medium px-3 py-1.5 rounded-full">
                 <svg
                   className="w-4 h-4 mr-1.5"
                   fill="currentColor"
@@ -52,11 +48,11 @@ const NewsDetailPage = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                {article.source?.name || "Tesla News"}
+                {article.source?.name || "News"}
               </span>
 
               {article.publishedAt && (
-                <span className="text-sm text-gray-500 flex items-center">
+                <span className="text-sm text-gray-400 flex items-center">
                   <svg
                     className="w-4 h-4 mr-1.5"
                     fill="currentColor"
@@ -68,25 +64,19 @@ const NewsDetailPage = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  {new Date(article.publishedAt).toLocaleDateString("th-TH", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  <span className="text-gray-400">
+                    {new Date(article.publishedAt).toUTCString()}
+                  </span>
                 </span>
               )}
             </div>
 
-            {/* Title */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-300 leading-tight mb-4">
               {article.title}
             </h1>
 
-            {/* Author */}
             {article.author && (
-              <div className="flex items-center text-gray-600 mb-6">
+              <div className="flex items-center text-gray-400 mb-6">
                 <svg
                   className="w-5 h-5 mr-2 text-gray-400"
                   fill="currentColor"
@@ -98,22 +88,22 @@ const NewsDetailPage = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="font-medium">โดย {article.author}</span>
+                <span className="font-medium">
+                  By <span className="text-gray-300">{article.author}</span>
+                </span>
               </div>
             )}
 
-            {/* Description */}
             {article.description && (
               <div className="mb-8">
-                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border-l-4 border-indigo-400 p-6 rounded-r-lg">
-                  <p className="text-lg leading-relaxed text-gray-800 font-normal">
+                <div className="border-l-4 border-indigo-400 p-6 rounded-r-lg">
+                  <p className="text-lg leading-relaxed text-gray-400 font-normal">
                     {article.description}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href={article.url}
@@ -134,10 +124,11 @@ const NewsDetailPage = () => {
                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                   />
                 </svg>
-                อ่านต้นฉบับ
+                Read Full Article
               </a>
 
               <button
+                type="button"
                 onClick={() => {
                   if (navigator.share) {
                     navigator.share({
@@ -145,11 +136,11 @@ const NewsDetailPage = () => {
                       url: window.location.href,
                     });
                   } else {
+                    toast("คัดลอกลิงก์แล้ว!");
                     navigator.clipboard.writeText(window.location.href);
-                    alert("ลิงก์ถูกคัดลอกแล้ว!");
                   }
                 }}
-                className="flex items-center justify-center bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                className="flex items-center justify-center cursor-pointer bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -164,16 +155,15 @@ const NewsDetailPage = () => {
                     d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
                   />
                 </svg>
-                แชร์ข่าว
+                Share
               </button>
             </div>
           </div>
         </div>
 
-        {/* Related Articles */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-300 mb-6">
-            ข่าวที่เกี่ยวข้อง
+            You May Also Like
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles
@@ -187,7 +177,7 @@ const NewsDetailPage = () => {
                       `/news/${encodeURIComponent(relatedArticle.title)}`
                     )
                   }
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
+                  className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
                 >
                   {relatedArticle.urlToImage && (
                     <div className="relative overflow-hidden">
@@ -199,7 +189,7 @@ const NewsDetailPage = () => {
                     </div>
                   )}
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-800 text-sm leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
+                    <h3 className="font-semibold text-gray-300 text-sm leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
                       {relatedArticle.title}
                     </h3>
                     <div className="flex items-center justify-between text-xs text-gray-500">
@@ -208,7 +198,7 @@ const NewsDetailPage = () => {
                         <span>
                           {new Date(
                             relatedArticle.publishedAt
-                          ).toLocaleDateString("th-TH", {
+                          ).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
                           })}
