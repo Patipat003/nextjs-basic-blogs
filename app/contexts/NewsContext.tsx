@@ -42,18 +42,7 @@ export const NewsProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get<{ articles: Article[] }>(
-        "https://newsapi.org/v2/everything",
-        {
-          params: {
-            q: "anime",
-            domains:
-              "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
-            language: "en",
-            apiKey: apiKey,
-          },
-        }
-      );
+      const response = await axios.get<{ articles: Article[] }>("/api/news");
       setArticles(response.data.articles);
     } catch (error) {
       console.error("Error fetching articles:", error);
