@@ -5,6 +5,7 @@ import { useNews } from "@/app/contexts/NewsContext";
 import { useParams, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { toast } from "sonner";
+import { slugify } from "@/app/utils/slugify";
 
 const NewsDetailPage = () => {
   const { slug } = useParams();
@@ -14,13 +15,12 @@ const NewsDetailPage = () => {
   if (loading) {
     return <Loading text="Loading article..." />;
   }
-
-  const article = articles.find((a) => encodeURIComponent(a.title) === slug);
+  const article = articles.find((a) => slugify(a.title) === slug);
 
   if (!article) return notFound();
 
   return (
-    <div className="min-h-screen pt-26">
+    <div className="min-h-screen pt-[104px]">
       <article className="max-w-4xl mx-auto px-6 py-8">
         <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
           {article.urlToImage && (
@@ -173,9 +173,7 @@ const NewsDetailPage = () => {
                 <div
                   key={index}
                   onClick={() =>
-                    router.push(
-                      `/news/${encodeURIComponent(relatedArticle.title)}`
-                    )
+                    router.push(`/news/${slugify(relatedArticle.title)}`)
                   }
                   className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
                 >

@@ -4,6 +4,7 @@ import Loading from "./components/Loading";
 import { useNews } from "./contexts/NewsContext";
 import Link from "next/link";
 import BackToTop from "./components/BackToTop";
+import { slugify } from "./utils/slugify";
 
 export default function Home() {
   const { articles, loading } = useNews();
@@ -13,14 +14,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen pt-26">
+    <div className="min-h-screen pt-[104px]">
       <BackToTop />
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article, index) => (
             <Link
               key={`${article.title}-${index}`}
-              href={`/news/${encodeURIComponent(article.title)}`}
+              href={`/news/${slugify(article.title)}`}
               className="group h-full"
             >
               <div className="bg-black/20 backdrop-blur-sm border border-white/10 h-full rounded-xl">
@@ -51,7 +52,7 @@ export default function Home() {
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col group-hover:scale-105 transition-transform duration-500">
-                  <h2 className="text-lg font-bold text-gray-300 group-hover:text-indigo-600 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
+                  <h2 className="text-lg font-bold text-gray-300 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
                     {article.title}
                   </h2>
 
