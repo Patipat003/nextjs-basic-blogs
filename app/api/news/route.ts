@@ -11,6 +11,7 @@ export async function GET() {
         domains:
           "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
         language: "en",
+        sortBy: "publishedAt",
         apiKey,
       },
     });
