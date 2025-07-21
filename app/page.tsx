@@ -49,6 +49,7 @@ export default async function Home() {
                     {article.urlToImage ? (
                       <Image
                         fill
+                        unoptimized
                         src={article.urlToImage}
                         alt={article.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"

@@ -147,6 +147,7 @@ export default async function NewsDetailPage({
             <div className="relative h-64 md:h-80 w-full">
               <Image
                 fill
+                unoptimized
                 src={article.urlToImage}
                 alt={article.title}
                 className="w-full h-64 md:h-80 object-cover"
@@ -274,6 +275,7 @@ export default async function NewsDetailPage({
                       <div className="relative overflow-hidden h-40 w-full">
                         <Image
                           fill
+                          unoptimized
                           src={relatedArticle.urlToImage}
                           alt={relatedArticle.title}
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
