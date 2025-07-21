@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Link from "next/link";
 import { slugify } from "./utils/slugify";
 import BackToTop from "./components/BackToTop";
@@ -23,7 +22,7 @@ async function getArticles(): Promise<Article[]> {
   }
 
   const data = await res.json();
-  console.log("Fetched articles:", data.articles); // Debugging line
+  // console.log("Fetched articles:", data.articles[0]); // Debugging line
   return data.articles;
 }
 
@@ -32,14 +31,6 @@ export default async function Home() {
 
   return (
     <>
-      <Head>
-        <title>Anime News | News Hub</title>
-        <meta
-          name="description"
-          content="Latest anime, games, and entertainment news from top sources."
-        />
-      </Head>
-
       <div className="min-h-screen pt-[104px]">
         <BackToTop />
 

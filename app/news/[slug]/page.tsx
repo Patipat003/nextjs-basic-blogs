@@ -30,10 +30,14 @@ interface Article {
 export default async function NewsDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
   const articles = await getArticles();
-  const article = articles.find((a) => slugify(a.title) === params.slug);
+  const article = articles.find((a) => {
+    const generatedSlug = slugify(`${a.title}-${a.publishedAt}`);
+    return generatedSlug === slug;
+  });
 
   if (!article) return notFound();
 
@@ -189,7 +193,9 @@ export default async function NewsDetailPage({
               .slice(0, 3)
               .map((relatedArticle, index) => (
                 <Link
-                  href={`/news/${slugify(relatedArticle.title)}`}
+                  href={`/news/${slugify(
+                    `${relatedArticle.title}-${relatedArticle.publishedAt}`
+                  )}`}
                   key={index}
                   className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
                 >
