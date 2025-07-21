@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { slugify } from "./utils/slugify";
 import BackToTop from "./components/BackToTop";
+import Image from "next/image";
 
 interface Article {
   source: { id: string | null; name: string };
@@ -22,7 +23,6 @@ async function getArticles(): Promise<Article[]> {
   }
 
   const data = await res.json();
-  // console.log("Fetched articles:", data.articles[0]); // Debugging line
   return data.articles;
 }
 
@@ -36,16 +36,19 @@ export default async function Home() {
 
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article, index) => (
+            {articles.map((article) => (
               <Link
-                key={`${article.title}-${index}`}
-                href={`/news/${slugify(article.title)}`}
+                key={article.url}
+                href={`/news/${slugify(
+                  `${article.title}-${article.publishedAt}`
+                )}`}
                 className="group h-full"
               >
                 <div className="bg-black/20 backdrop-blur-sm border border-white/10 h-full rounded-xl">
-                  <div className="relative overflow-hidden flex-shrink-0">
+                  <div className="relative overflow-hidden flex-shrink-0 h-48 w-full">
                     {article.urlToImage ? (
-                      <img
+                      <Image
+                        fill
                         src={article.urlToImage}
                         alt={article.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"

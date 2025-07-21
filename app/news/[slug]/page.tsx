@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
-import { toast } from "sonner";
 import { slugify } from "@/app/utils/slugify";
 import type { Metadata } from "next";
-import { Link } from "lucide-react";
+import Link from "next/link";
+import PublishedDate from "@/app/components/PublishedDate";
+import ShareButton from "@/app/components/ShareButton";
+import Image from "next/image";
 
 async function getArticles(): Promise<Article[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/news`, {
@@ -27,6 +29,102 @@ interface Article {
   publishedAt: string;
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/news`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch articles");
+    }
+
+    const data = await res.json();
+    const articles = data.articles;
+
+    const article: Article | undefined = articles.find(
+      (a: Article) => slugify(`${a.title}-${a.publishedAt}`) === slug
+    );
+
+    if (!article) {
+      return {
+        title: "Not Found | News Hub",
+        description: "Sorry, we couldn't find this news article.",
+      };
+    }
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      "https://news-blogs-projectz.vercel.app";
+    const articleUrl = `${baseUrl}/news/${slug}`;
+
+    return {
+      title: article.title,
+      description:
+        article.description || `Reading more about: ${article.source?.name}`,
+      authors: article.author ? [{ name: article.author }] : undefined,
+      category: "news",
+      keywords: [
+        article.source?.name,
+        "news",
+        "article",
+        ...article.title.split(" ").slice(0, 5),
+      ].filter(Boolean),
+
+      openGraph: {
+        title: article.title,
+        description:
+          article.description || `Reading more about: ${article.source?.name}`,
+        url: articleUrl,
+        siteName: "News Hub",
+        type: "article",
+        publishedTime: article.publishedAt,
+        authors: article.author ? [article.author] : undefined,
+        images: article.urlToImage
+          ? [
+              {
+                url: article.urlToImage,
+                width: 1200,
+                height: 630,
+                alt: article.title,
+              },
+            ]
+          : [
+              {
+                url: `${baseUrl}/default-news-image.jpg`,
+                width: 1200,
+                height: 630,
+                alt: "News Hub Default Image",
+              },
+            ],
+      },
+
+      twitter: {
+        card: "summary_large_image",
+        title: article.title,
+        description:
+          article.description || `Reading more about: ${article.source?.name}`,
+        images: article.urlToImage ? [article.urlToImage] : undefined,
+        creator: article.author
+          ? `@${article.author.replace(/\s+/g, "")}`
+          : undefined,
+      },
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Error | News Hub",
+      description: "An error occurred while loading this article.",
+    };
+  }
+}
+
 export default async function NewsDetailPage({
   params,
 }: {
@@ -44,10 +142,11 @@ export default async function NewsDetailPage({
   return (
     <main className="min-h-screen pt-[104px]">
       <article className="max-w-4xl mx-auto px-6 py-8">
-        <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
+        <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-md border border-white/10">
           {article.urlToImage && (
-            <div className="relative">
-              <img
+            <div className="relative h-64 md:h-80 w-full">
+              <Image
+                fill
                 src={article.urlToImage}
                 alt={article.title}
                 className="w-full h-64 md:h-80 object-cover"
@@ -87,7 +186,7 @@ export default async function NewsDetailPage({
                     />
                   </svg>
                   <span className="text-gray-400">
-                    {new Date(article.publishedAt).toUTCString()}
+                    <PublishedDate dateString={article.publishedAt} />
                   </span>
                 </span>
               )}
@@ -148,37 +247,7 @@ export default async function NewsDetailPage({
                 </svg>
                 Read Full Article
               </a>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: article.title,
-                      url: window.location.href,
-                    });
-                  } else {
-                    toast("คัดลอกลิงก์แล้ว!");
-                    navigator.clipboard.writeText(window.location.href);
-                  }
-                }}
-                className="flex items-center justify-center cursor-pointer bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
-                  />
-                </svg>
-                Share
-              </button>
+              <ShareButton title={article.title} />
             </div>
           </div>
         </div>
@@ -191,43 +260,44 @@ export default async function NewsDetailPage({
             {articles
               .filter((a) => a.title !== article.title)
               .slice(0, 3)
-              .map((relatedArticle, index) => (
-                <Link
-                  href={`/news/${slugify(
-                    `${relatedArticle.title}-${relatedArticle.publishedAt}`
-                  )}`}
-                  key={index}
-                  className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
-                >
-                  {relatedArticle.urlToImage && (
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={relatedArticle.urlToImage}
-                        alt={relatedArticle.title}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+              .map((relatedArticle) => {
+                console.log(relatedArticle.urlToImage);
+                return (
+                  <Link
+                    key={relatedArticle.url}
+                    href={`/news/${slugify(
+                      `${relatedArticle.title}-${relatedArticle.publishedAt}`
+                    )}`}
+                    className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
+                  >
+                    {relatedArticle.urlToImage && (
+                      <div className="relative overflow-hidden h-40 w-full">
+                        <Image
+                          fill
+                          src={relatedArticle.urlToImage}
+                          alt={relatedArticle.title}
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-300 text-sm leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
+                        {relatedArticle.title}
+                      </h3>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>{relatedArticle.source?.name}</span>
+                        {relatedArticle.publishedAt && (
+                          <span>
+                            <PublishedDate
+                              dateString={relatedArticle.publishedAt}
+                            />
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-300 text-sm leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
-                      {relatedArticle.title}
-                    </h3>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{relatedArticle.source?.name}</span>
-                      {relatedArticle.publishedAt && (
-                        <span>
-                          {new Date(
-                            relatedArticle.publishedAt
-                          ).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
           </div>
         </div>
       </article>
