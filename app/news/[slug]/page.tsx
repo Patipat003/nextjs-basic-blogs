@@ -1,26 +1,44 @@
-"use client";
-
-import Loading from "@/app/components/Loading";
-import { useNews } from "@/app/contexts/NewsContext";
-import { useParams, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { toast } from "sonner";
 import { slugify } from "@/app/utils/slugify";
+import type { Metadata } from "next";
+import { Link } from "lucide-react";
 
-const NewsDetailPage = () => {
-  const { slug } = useParams();
-  const { articles, loading } = useNews();
-  const router = useRouter();
+async function getArticles(): Promise<Article[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/news`, {
+    cache: "no-store",
+  });
 
-  if (loading) {
-    return <Loading text="Loading article..." />;
+  if (!res.ok) {
+    throw new Error("Failed to fetch");
   }
-  const article = articles.find((a) => slugify(a.title) === slug);
+
+  const data = await res.json();
+  return data.articles;
+}
+
+interface Article {
+  title: string;
+  description: string;
+  url: string;
+  urlToImage: string;
+  source: { name: string };
+  author: string;
+  publishedAt: string;
+}
+
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const articles = await getArticles();
+  const article = articles.find((a) => slugify(a.title) === params.slug);
 
   if (!article) return notFound();
 
   return (
-    <div className="min-h-screen pt-[104px]">
+    <main className="min-h-screen pt-[104px]">
       <article className="max-w-4xl mx-auto px-6 py-8">
         <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
           {article.urlToImage && (
@@ -170,11 +188,9 @@ const NewsDetailPage = () => {
               .filter((a) => a.title !== article.title)
               .slice(0, 3)
               .map((relatedArticle, index) => (
-                <div
+                <Link
+                  href={`/news/${slugify(relatedArticle.title)}`}
                   key={index}
-                  onClick={() =>
-                    router.push(`/news/${slugify(relatedArticle.title)}`)
-                  }
                   className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
                 >
                   {relatedArticle.urlToImage && (
@@ -204,13 +220,11 @@ const NewsDetailPage = () => {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
           </div>
         </div>
       </article>
-    </div>
+    </main>
   );
-};
-
-export default NewsDetailPage;
+}
