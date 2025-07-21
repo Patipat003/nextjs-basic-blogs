@@ -260,9 +260,9 @@ export default async function NewsDetailPage({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles
               .filter((a) => a.title !== article.title)
+              .sort(() => Math.random() - 0.5)
               .slice(0, 3)
               .map((relatedArticle) => {
-                console.log(relatedArticle.urlToImage);
                 return (
                   <Link
                     key={relatedArticle.url}
