@@ -5,15 +5,13 @@ export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
 
   try {
-    const response = await axios.get("https://newsapi.org/v2/top-headlines", {
+    const response = await axios.get("https://newsapi.org/v2/everything", {
       params: {
-        country: "us",
-        category: "anime",
-        // q: "cosplay",
-        // domains:
-        //   "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
-      //  language: "en",
-        // sortBy: "publishedAt",
+         q: "anime",
+        domains:
+         "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
+      language: "en",
+        sortBy: "publishedAt",
         apiKey,
       },
     });
