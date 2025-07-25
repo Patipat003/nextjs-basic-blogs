@@ -6,7 +6,9 @@ const Navbar = () => {
       <Link href="/">
         <div className="max-w-7xl mx-auto px-6 py-4 text-white">
           <h1 className="text-indigo-400 text-3xl font-bold">News Hub</h1>
-          <p className="mt-2 text-md">Stay updated with the latest news</p>
+          <p className="mt-2 text-md hidden md:block">
+            Stay updated with the latest news
+          </p>
         </div>
       </Link>
     </div>

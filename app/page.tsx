@@ -35,7 +35,7 @@ export default async function Home() {
         <BackToTop />
 
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5">
             {articles.map((article) => (
               <Link
                 key={article.url}
@@ -44,7 +44,7 @@ export default async function Home() {
                 )}`}
                 className="group h-full"
               >
-                <div className="bg-black/20 backdrop-blur-sm border border-white/10 h-full rounded-xl">
+                <div className="bg-black/20 backdrop-blur-sm border border-white/10 h-full">
                   <div className="relative overflow-hidden flex-shrink-0 h-48 w-full">
                     {article.urlToImage ? (
                       <Image
@@ -74,7 +74,7 @@ export default async function Home() {
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col group-hover:scale-105 transition-transform duration-500">
-                    <h2 className="text-lg font-bold text-gray-300 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
+                    <h2 className="group-hover:text-indigo-400 text-lg font-bold text-gray-300 transition-colors duration-200 line-clamp-3 leading-tight min-h-[4.5rem]">
                       {article.title}
                     </h2>
 
@@ -87,7 +87,7 @@ export default async function Home() {
                         {article.source?.name || "News"}
                       </p>
 
-                      <div className="flex items-center justify-center text-gray-400 group-hover:text-indigo-700 transition-colors flex-shrink-0">
+                      <div className="flex items-center justify-center text-gray-400 group-hover:text-indigo-400 transition-colors flex-shrink-0">
                         <span className="text-xs font-medium mr-0.5">
                           Read more
                         </span>

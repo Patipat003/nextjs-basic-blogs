@@ -143,7 +143,7 @@ export default async function NewsDetailPage({
     <main className="min-h-screen pt-[104px]">
       <article className="max-w-4xl mx-auto px-6 py-8">
         <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-md border border-white/10">
-          {article.urlToImage && (
+          {article.urlToImage ? (
             <div className="relative h-64 md:h-80 w-full">
               <Image
                 fill
@@ -153,6 +153,20 @@ export default async function NewsDetailPage({
                 className="w-full h-64 md:h-80 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+            </div>
+          ) : (
+            <div className="w-full h-64 md:h-80 flex items-center justify-center">
+              <svg
+                className="w-16 h-16 text-indigo-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                />
+              </svg>
             </div>
           )}
 
@@ -257,7 +271,7 @@ export default async function NewsDetailPage({
           <h2 className="text-2xl font-bold text-gray-300 mb-6">
             You May Also Like
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {articles
               .filter((a) => a.title !== article.title)
               .sort(() => Math.random() - 0.5)
@@ -271,7 +285,7 @@ export default async function NewsDetailPage({
                     )}`}
                     className="bg-black/20 backdrop-blur-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer hover:-translate-y-1 group"
                   >
-                    {relatedArticle.urlToImage && (
+                    {relatedArticle.urlToImage ? (
                       <div className="relative overflow-hidden h-40 w-full">
                         <Image
                           fill
@@ -281,9 +295,23 @@ export default async function NewsDetailPage({
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center">
+                        <svg
+                          className="w-16 h-16 text-indigo-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
                     )}
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-300 text-sm leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
+                      <h3 className="font-semibold text-gray-300 text-sm leading-snug line-clamp-2 group-hover:text-indigo-400 transition-colors mb-2">
                         {relatedArticle.title}
                       </h3>
                       <div className="flex items-center justify-between text-xs text-gray-500">
