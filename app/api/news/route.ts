@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const response = await axios.get("https://newsapi.org/v2/everything", {
       params: {
-        q: "hoyoverse OR miHoYo OR genshin OR honkai OR star rail OR zzz",
+        q: "hoyoverse",
         // domains:
         //   "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
         language: "en",
