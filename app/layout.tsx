@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-black">
       <body
         className={`bg-gradient-to-br from-violet-950 via-indigo-950 to-violet-950 bg-no-repeat ${roboto.variable} antialiased`}
       >
