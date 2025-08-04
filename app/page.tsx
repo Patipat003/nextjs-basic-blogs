@@ -27,11 +27,12 @@ async function getArticles(): Promise<Article[]> {
   return data.articles;
 }
 
-interface HomeProps {
-  searchParams: { q?: string };
+interface SearchParams {
+  searchParams: {
+    q?: string;
+  };
 }
-
-export default async function Home({ searchParams }: HomeProps) {
+export default async function Home({ searchParams }: SearchParams) {
   const articles = await getArticles();
   const query = searchParams.q || "";
 
