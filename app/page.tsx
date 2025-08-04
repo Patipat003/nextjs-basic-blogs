@@ -28,13 +28,15 @@ async function getArticles(): Promise<Article[]> {
 }
 
 interface SearchParams {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
-  };
+  }>;
 }
+
 export default async function Home({ searchParams }: SearchParams) {
   const articles = await getArticles();
-  const query = searchParams.q || "";
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams.q || "";
 
   const filteredArticles = query
     ? articles.filter(
