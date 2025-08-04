@@ -146,7 +146,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-300 mb-2">
-                No articles found for "{query}"
+                No articles found for &quot;{query}&quot;
               </h3>
               <p className="text-gray-400">
                 Try different keywords or{" "}
