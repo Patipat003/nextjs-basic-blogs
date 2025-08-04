@@ -2,6 +2,7 @@ import Link from "next/link";
 import { slugify } from "./utils/slugify";
 import BackToTop from "./components/BackToTop";
 import Image from "next/image";
+import SearchInput from "./components/SearchInput";
 
 interface Article {
   source: { id: string | null; name: string };
@@ -26,17 +27,33 @@ async function getArticles(): Promise<Article[]> {
   return data.articles;
 }
 
-export default async function Home() {
+interface HomeProps {
+  searchParams: { q?: string };
+}
+
+export default async function Home({ searchParams }: HomeProps) {
   const articles = await getArticles();
+  const query = searchParams.q || "";
+
+  const filteredArticles = query
+    ? articles.filter(
+        (article) =>
+          article.title.toLowerCase().includes(query.toLowerCase()) ||
+          article.description?.toLowerCase().includes(query.toLowerCase())
+      )
+    : articles;
 
   return (
     <>
-      <div className="min-h-screen pt-[104px]">
+      <div className="min-h-screen">
         <BackToTop />
+        <div className="flex justify-center">
+          <SearchInput initialValue={query} />
+        </div>
 
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <Link
                 key={article.url}
                 href={`/news/${slugify(
@@ -112,6 +129,35 @@ export default async function Home() {
             ))}
           </div>
 
+          {/* No results found */}
+          {filteredArticles.length === 0 && query && (
+            <div className="text-center py-16">
+              <div className="text-indigo-200 mb-6">
+                <svg
+                  className="w-24 h-24 mx-auto"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-300 mb-2">
+                No articles found for "{query}"
+              </h3>
+              <p className="text-gray-400">
+                Try different keywords or{" "}
+                <Link href="/" className="text-indigo-400 hover:underline">
+                  view all articles
+                </Link>
+              </p>
+            </div>
+          )}
+
+          {/* No articles at all */}
           {articles.length === 0 && (
             <div className="text-center py-16">
               <div className="text-indigo-200 mb-6">

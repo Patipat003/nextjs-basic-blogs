@@ -7,10 +7,10 @@ export async function GET() {
   try {
     const response = await axios.get("https://newsapi.org/v2/everything", {
       params: {
-         q: "anime",
+        q: "anime",
         domains:
-         "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
-      language: "en",
+          "gamespot.com,gizmodo.com,kotaku.com,ign.com,hypebeast.com,slashfilm.com,animenewsnetwork.com",
+        language: "en",
         sortBy: "publishedAt",
         apiKey,
       },

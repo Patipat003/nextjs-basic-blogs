@@ -140,7 +140,7 @@ export default async function NewsDetailPage({
   if (!article) return notFound();
 
   return (
-    <main className="min-h-screen pt-[104px]">
+    <main className="min-h-screen">
       <article className="max-w-4xl mx-auto px-6 py-8">
         <div className="overflow-hidden bg-black/20 backdrop-blur-sm rounded-md border border-white/10">
           {article.urlToImage ? (
