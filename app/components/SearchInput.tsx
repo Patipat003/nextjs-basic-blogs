@@ -39,7 +39,7 @@ export default function SearchInput({ initialValue }: SearchInputProps) {
   };
 
   return (
-    <div className="bg-black/30 rounded-md border-b-2 border-indigo-500 gap-2 py-3 px-4 mt-5 mx-6 w-full md:w-2/4">
+    <div className="flex bg-black/30 rounded-md border-b-2 border-indigo-500 gap-2 py-3 px-4 mt-5 mx-6 w-full md:w-2/4">
       <input
         value={input}
         onChange={handleInputChange}
@@ -48,7 +48,7 @@ export default function SearchInput({ initialValue }: SearchInputProps) {
         className="bg-transparent border-none outline-none text-white text-sm placeholder-[#c8c8c8] flex-1 w-full"
       />
       {isPending && (
-        <div className="absolute right-4">
+        <div className="right-4">
           <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
